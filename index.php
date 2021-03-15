@@ -49,9 +49,14 @@ echo '
 		<body>
 			<h1>' . $launch->name . '</h1>
 			<h2>' . $launch->provider->name . ' ' . $launch->vehicle->name . '</h2><br>
-			<h2>' . $launch->pad->location->name . ' ' . $launch->pad->name . '</h2><br>
-			<div class="numberdisplay ctdown" id="ctdown">--:--:--:--</div><br>
-			<hr>
+			<h2>' . $launch->pad->location->name . ' ' . $launch->pad->name . '</h2><br>';
+if (isset($launch->t0) || isset($launch->win_open)) {
+	echo '<div class="numberdisplay ctdown" id="ctdown">--:--:--:--</div><br>';
+} else {
+	echo '<div class="numberdisplay">' . date('M d', strtotime($launch->date_str . ' ' . date("Y"))) . '' . '</div><br>';
+}
+
+echo '			<hr>
 			<table>';
 			
 $i = 0;
@@ -66,20 +71,23 @@ echo '
 			<script>
 		
 				//Countdown
-				var x = setInterval(function() {
-					var countDownDate = new Date("' . (isset($launch->t0) ? $launch->t0 : $launch->win_open) . '").getTime();
-					var now = new Date().getTime();
-					var distance = countDownDate - now;
-					document.getElementById("ctdown").innerHTML = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0") + ":" + String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, "0") + ":" + String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0") + ":" + String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, "0");
-					
-					if (distance < 0) {
-						clearInterval(x);
-						document.getElementById("ctdown").innerHTML = "00:00:00:00";
-						setTimeout(function() {
-							location.reload();
-						}, (60 * 3 * 1000));
-					}
-				}, 1000);';
+';
+				if (isset($launch->t0) || isset($launch->win_open)) {
+					echo 'var x = setInterval(function() {
+						var countDownDate = new Date("' . (isset($launch->t0) ? $launch->t0 : $launch->win_open) . '").getTime();
+						var now = new Date().getTime();
+						var distance = countDownDate - now;
+						document.getElementById("ctdown").innerHTML = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0") + ":" + String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, "0") + ":" + String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0") + ":" + String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, "0");
+						
+						if (distance < 0) {
+							clearInterval(x);
+							document.getElementById("ctdown").innerHTML = "00:00:00:00";
+							setTimeout(function() {
+								location.reload();
+							}, (60 * 3 * 1000));
+						}
+					}, 1000);';
+				}
 	
 $i = 0;
 foreach ($next_launches->result as $future_launch) {
